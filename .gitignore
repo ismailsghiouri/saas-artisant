@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.log
+~$*.doc
+~$*.docx
+~$*.xls
+~$*.xlsx
+~$*.ppt
+~$*.pptx
