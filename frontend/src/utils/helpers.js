@@ -53,3 +53,11 @@ export const initials = (fullName = '') =>
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join('');
+
+export const slugify = (text = '') =>
+  text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import BlogArticle, { AdSlot } from '../components/BlogArticle';
+import AdSlot from '../components/AdSlot';
+import BlogArticleCard from '../components/BlogArticleCard';
 import { fetchBlogCategories, fetchBlogPosts } from '../utils/api';
 
 export default function BlogPage() {
@@ -74,7 +75,7 @@ export default function BlogPage() {
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
-          <BlogArticle key={post._id} post={post} />
+          <BlogArticleCard key={post._id} post={post} />
         ))}
       </div>
     </div>
