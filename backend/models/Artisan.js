@@ -158,6 +158,18 @@ const artisanSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    // Statut premium (mise en avant dans les résultats de recherche, badge
+    // profil...). Activation manuelle pour le MVP, en l'absence d'intégration
+    // PSP (voir note de périmètre dans reservationController.js) — à brancher
+    // sur un vrai paiement récurrent dès que le prestataire sera choisi.
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+    premiumSince: {
+      type: Date,
+      default: null,
+    },
     role: {
       type: String,
       default: 'artisan',

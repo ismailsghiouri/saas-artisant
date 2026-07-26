@@ -195,6 +195,11 @@ const schemas = {
     comment: Joi.string().trim().max(500).allow('', null),
   }),
 
+  updateReview: Joi.object({
+    rating: Joi.number().integer().min(1).max(5),
+    comment: Joi.string().trim().max(500).allow('', null),
+  }).min(1),
+
   // --- Blog ---
   createBlogPost: Joi.object({
     title: Joi.string().trim().max(200).required(),

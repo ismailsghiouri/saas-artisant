@@ -12,6 +12,7 @@
 
 const express = require('express');
 const artisanController = require('../controllers/artisanController');
+const reviewController = require('../controllers/reviewController');
 const { protect } = require('../middleware/auth');
 const { validate, validateQuery, schemas } = require('../middleware/validation');
 
@@ -43,7 +44,12 @@ router.post(
 );
 
 // --- Recherche publique (matching client) ---
+// "/top-rated" est déclarée avant "/:id" pour éviter qu'Express ne
+// l'interprète comme un identifiant d'artisan.
+router.get('/top-rated', artisanController.getTopRated);
 router.get('/', validateQuery(schemas.searchArtisans), artisanController.getAllArtisans);
 router.get('/:id', artisanController.getArtisanById);
+router.get('/:id/reviews', reviewController.getArtisanReviews);
+router.post('/:id/upgrade-premium', protect('artisan'), artisanController.upgradeToPremium);
 
 module.exports = router;

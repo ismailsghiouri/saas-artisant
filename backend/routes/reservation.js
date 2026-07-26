@@ -47,4 +47,21 @@ router.patch(
   reservationController.cancelReservation
 );
 
+// Alias REST (PUT/DELETE) équivalents aux routes PATCH ci-dessus, pour les
+// clients HTTP qui attendent ces verbes sur des actions de transition
+// d'état plutôt que des PATCH sémantiques.
+router.put('/:id/confirm', protect('artisan'), reservationController.acceptReservation);
+router.put(
+  '/:id/complete',
+  protect('artisan'),
+  validate(schemas.completeReservation),
+  reservationController.completeReservation
+);
+router.delete(
+  '/:id',
+  protect(),
+  validate(schemas.cancelReservation),
+  reservationController.cancelReservation
+);
+
 module.exports = router;

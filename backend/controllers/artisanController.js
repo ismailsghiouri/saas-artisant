@@ -204,6 +204,56 @@ const getArtisanById = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: artisan });
 });
 
+/**
+ * GET /api/artisans/top-rated
+ * Classement des artisans les mieux notés (mise en avant page d'accueil /
+ * recherche), parmi les profils vérifiés et actifs ayant reçu au moins un
+ * avis. Le nombre d'avis sert de départage à note égale.
+ */
+const getTopRated = asyncHandler(async (req, res) => {
+  const limit = Math.min(50, Number(req.query.limit) || 10);
+
+  const artisans = await Artisan.find({
+    kycStatus: 'verified',
+    isActive: true,
+    'rating.count': { $gt: 0 },
+  })
+    .select('-password -documents -kycRejectionReason')
+    .sort('-rating.average -rating.count')
+    .limit(limit);
+
+  res.status(200).json({ success: true, results: artisans.length, data: artisans });
+});
+
+/**
+ * POST /api/artisans/:id/upgrade-premium
+ * Active le statut premium de l'artisan authentifié. Réservé au titulaire du
+ * profil (un artisan ne peut pas activer le premium d'un autre compte) ; il
+ * doit par ailleurs être vérifié (KYC) pour éviter de mettre en avant un
+ * profil non contrôlé.
+ */
+const upgradeToPremium = asyncHandler(async (req, res, next) => {
+  if (req.params.id !== String(req.user._id)) {
+    return next(new AppError("Vous ne pouvez activer le premium que sur votre propre profil.", 403));
+  }
+
+  if (req.user.kycStatus !== 'verified') {
+    return next(
+      new AppError('Votre profil doit être vérifié par FixNow avant de passer premium.', 403)
+    );
+  }
+
+  req.user.isPremium = true;
+  req.user.premiumSince = new Date();
+  await req.user.save();
+
+  res.status(200).json({
+    success: true,
+    message: 'Statut premium activé avec succès.',
+    data: req.user.toSafeObject(),
+  });
+});
+
 module.exports = {
   register,
   login,
@@ -213,4 +263,6 @@ module.exports = {
   submitKyc,
   getAllArtisans,
   getArtisanById,
+  getTopRated,
+  upgradeToPremium,
 };

@@ -17,7 +17,12 @@ const { validate, schemas } = require('../middleware/validation');
 const router = express.Router();
 
 // --- Lecture publique ---
+// "/search" et "/categories" sont déclarées avant "/:slug" pour éviter
+// qu'Express ne les interprète comme un slug d'article. getAllPosts gère déjà
+// la recherche plein texte via ?q=... (voir blogController.js) ; "/search"
+// n'est qu'un alias explicite du même contrôleur.
 router.get('/', blogController.getAllPosts);
+router.get('/search', blogController.getAllPosts);
 router.get('/categories', blogController.getCategories);
 router.get('/:slug', blogController.getPostBySlug);
 

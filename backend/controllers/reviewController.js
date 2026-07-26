@@ -54,14 +54,24 @@ const createReview = asyncHandler(async (req, res, next) => {
 
 /**
  * GET /api/reviews/artisan/:artisanId
- * Liste publique et paginée des avis d'un artisan (fiche profil).
+ * GET /api/artisans/:id/reviews
+ * GET /api/reviews?artisan_id=X
+ * Liste publique et paginée des avis d'un artisan (fiche profil). L'identifiant
+ * de l'artisan peut être fourni en paramètre de route (deux formats, selon le
+ * routeur qui monte ce contrôleur) ou en query string.
  */
-const getArtisanReviews = asyncHandler(async (req, res) => {
+const getArtisanReviews = asyncHandler(async (req, res, next) => {
+  const artisanId = req.params.artisanId || req.params.id || req.query.artisan_id;
+
+  if (!artisanId) {
+    return next(new AppError("L'identifiant de l'artisan est requis (artisan_id).", 400));
+  }
+
   const page = Math.max(1, Number(req.query.page) || 1);
   const limit = Math.min(50, Number(req.query.limit) || 10);
   const skip = (page - 1) * limit;
 
-  const filter = { artisan: req.params.artisanId };
+  const filter = { artisan: artisanId };
 
   const [reviews, total] = await Promise.all([
     Review.find(filter)
@@ -82,4 +92,53 @@ const getArtisanReviews = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { createReview, getArtisanReviews };
+/**
+ * PUT /api/reviews/:id
+ * Le client auteur de l'avis peut corriger sa note/commentaire. La note
+ * moyenne de l'artisan est recalculée via le hook post-save du modèle
+ * (voir models/Review.js), déclenché par doc.save() ci-dessous — d'où
+ * l'usage explicite de save() plutôt que findByIdAndUpdate.
+ */
+const updateReview = asyncHandler(async (req, res, next) => {
+  const review = await Review.findById(req.params.id);
+
+  if (!review) {
+    return next(new AppError('Avis introuvable.', 404));
+  }
+
+  if (!review.client.equals(req.user._id)) {
+    return next(new AppError('Vous ne pouvez modifier que vos propres avis.', 403));
+  }
+
+  if (req.body.rating !== undefined) review.rating = req.body.rating;
+  if (req.body.comment !== undefined) review.comment = req.body.comment;
+  await review.save();
+
+  res.status(200).json({ success: true, data: review });
+});
+
+/**
+ * DELETE /api/reviews/:id
+ * Le client auteur de l'avis peut le supprimer ; la note moyenne de
+ * l'artisan est recalculée manuellement (pas de hook post-remove sur le
+ * modèle, contrairement à la création).
+ */
+const deleteReview = asyncHandler(async (req, res, next) => {
+  const review = await Review.findById(req.params.id);
+
+  if (!review) {
+    return next(new AppError('Avis introuvable.', 404));
+  }
+
+  if (!review.client.equals(req.user._id)) {
+    return next(new AppError('Vous ne pouvez supprimer que vos propres avis.', 403));
+  }
+
+  const artisanId = review.artisan;
+  await review.deleteOne();
+  await Review.recalculateArtisanRating(artisanId);
+
+  res.status(204).json({ success: true, data: null });
+});
+
+module.exports = { createReview, getArtisanReviews, updateReview, deleteReview };
