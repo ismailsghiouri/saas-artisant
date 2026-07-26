@@ -1,0 +1,32 @@
+@layer components {
+  .page-container {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .hero-gradient {
+    @apply bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800;
+  }
+
+  .prose-fixnow {
+    @apply max-w-none text-gray-700 dark:text-gray-300 leading-relaxed;
+  }
+  .prose-fixnow p {
+    @apply mb-4;
+  }
+  .prose-fixnow h2 {
+    @apply mt-8 mb-3 text-xl font-bold text-gray-900 dark:text-white;
+  }
+  .prose-fixnow h3 {
+    @apply mt-6 mb-2 text-lg font-semibold text-gray-900 dark:text-white;
+  }
+  .prose-fixnow a {
+    @apply text-primary-600 dark:text-primary-400 underline;
+  }
+  .prose-fixnow ul {
+    @apply mb-4 ml-5 list-disc;
+  }
+
+  .stat-tile {
+    @apply card p-4 text-center;
+  }
+}
