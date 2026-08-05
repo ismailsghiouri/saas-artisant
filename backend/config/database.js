@@ -10,7 +10,29 @@ const dns = require('dns');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+// En environnement serverless (Vercel), le module peut être ré-évalué à froid
+// à chaque invocation mais le process Node peut aussi être réutilisé entre
+// deux requêtes ("warm" invocation) : on met donc en cache la connexion (et sa
+// promesse en cours) au niveau du process pour éviter de rouvrir une connexion
+// MongoDB à chaque requête, plutôt qu'une seule fois au démarrage comme avec
+// un serveur classique (voir server.js, désormais appelé sur chaque requête).
+let cachedConnPromise = null;
+
 const connectDB = async () => {
+  if (mongoose.connection.readyState === 1) return mongoose.connection;
+  if (cachedConnPromise) return cachedConnPromise;
+
+  cachedConnPromise = connectAndSeed().catch((err) => {
+    // Un échec de connexion ne doit pas rester en cache : la prochaine requête
+    // doit pouvoir retenter, pas réutiliser une promesse déjà rejetée.
+    cachedConnPromise = null;
+    throw err;
+  });
+
+  return cachedConnPromise;
+};
+
+const connectAndSeed = async () => {
   let mongoUri = process.env.MONGODB_URI;
 
   if (mongoUri && mongoUri.startsWith('mongodb+srv://')) {
@@ -38,7 +60,11 @@ const connectDB = async () => {
       console.log(`✅ MongoDB In-Memory connecté : ${conn.connection.host}`);
     } catch (memError) {
       console.error(`❌ Échec de la base de données in-memory : ${memError.message}`);
-      process.exit(1);
+      // En serverless (Vercel), tuer le process avec process.exit() peut laisser
+      // l'environnement d'exécution dans un état instable pour l'invocation
+      // suivante : on laisse plutôt l'appelant (connectDB) transformer cet échec
+      // en erreur 503 propre pour la requête en cours.
+      throw memError;
     }
   }
 

@@ -3,6 +3,7 @@ node_modules/
 *.log
 .agents/
 .stitch/
+.vercel/
 ~$*.doc
 ~$*.docx
 ~$*.xls

@@ -68,6 +68,21 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // être monté APRÈS le body parsing, sur lequel il s'appuie.
 app.use(xss());
 
+// Sur Vercel, il n'y a pas de startServer() persistant qui se connecte une
+// fois pour toutes au démarrage (voir plus bas) : chaque requête doit donc
+// s'assurer elle-même que MongoDB est connecté avant de continuer.
+// connectDB() met la connexion en cache, ce qui rend cet appel quasi-gratuit
+// sur les invocations "warm" (la grande majorité en pratique).
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('❌ Connexion MongoDB indisponible :', err.message);
+    res.status(503).json({ success: false, message: 'Service temporairement indisponible.' });
+  }
+});
+
 // Limite globale du nombre de requêtes par IP sur l'API, pour atténuer le
 // scraping abusif et les abus de quota (ex. brute force, bots).
 const apiLimiter = rateLimit({
@@ -177,7 +192,12 @@ const startServer = async () => {
 // Supertest sans socket HTTP réel : on n'exécute donc ni la connexion DB, ni
 // app.listen(), ni les gestionnaires de process ci-dessous, pour permettre un
 // require('./server') sans effet de bord ni port déjà utilisé.
-if (process.env.NODE_ENV !== 'test') {
+//
+// Sur Vercel (serverless), il n'y a pas non plus de socket HTTP long-vivant à
+// ouvrir : la plateforme invoque directement l'app exportée pour chaque
+// requête (voir api/index.js) — app.listen() n'a donc pas de sens ici, et la
+// connexion DB est gérée par le middleware ci-dessus plutôt qu'au démarrage.
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   startServer();
 
   /**

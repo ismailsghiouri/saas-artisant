@@ -1,0 +1,8 @@
+{
+  "headers": [
+    {
+      "source": "/(favicon-32.png|apple-touch-icon.png|new-logo.png|logo.png|logo-mark.png)",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, must-revalidate" }]
+    }
+  ]
+}
