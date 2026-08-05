@@ -38,7 +38,7 @@ export default function BlogPage() {
 
   return (
     <div className="page-container py-10">
-      <h1 className="section-title">Le blog FixNow</h1>
+      <h1 className="section-title">Le blog Maalam Expert</h1>
       <p className="section-subtitle mb-6">
         Conseils pratiques, prix indicatifs et actualités pour bien choisir votre artisan.
       </p>

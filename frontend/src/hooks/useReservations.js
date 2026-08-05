@@ -23,7 +23,7 @@ export function useReservations() {
     setError(null);
     try {
       const res =
-        role === 'artisan'
+        role === 'worker'
           ? await fetchMyReservationsAsArtisan()
           : await fetchMyReservationsAsClient();
       setReservations(res.data);

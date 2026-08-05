@@ -37,7 +37,7 @@ const sendSms = async (phone, message) => {
 
   try {
     await smsClient.post('/send', {
-      sender: process.env.SMS_SENDER_ID || 'FixNow',
+      sender: process.env.SMS_SENDER_ID || 'Maalam Expert',
       to: phone,
       text: message,
     });
@@ -58,13 +58,13 @@ const sendSms = async (phone, message) => {
  * Utilisé en complément du push notification (hors périmètre de ce backend)
  * pour garantir la réception même en cas de connexion data instable.
  *
- * @param {{ phone: string }} artisan
+ * @param {{ phone: string }} worker
  * @param {{ serviceCategory: string, address: string }} reservation
  */
-const notifyArtisanNewJob = (artisan, reservation) =>
+const notifyWorkerNewJob = (worker, reservation) =>
   sendSms(
-    artisan.phone,
-    `FixNow : nouvelle demande "${reservation.serviceCategory}" pres de ${reservation.address}. Ouvrez l'app pour accepter.`
+    worker.phone,
+    `Maalam Expert : nouvelle demande "${reservation.serviceCategory}" pres de ${reservation.address}. Ouvrez l'app pour accepter.`
   );
 
 /**
@@ -73,10 +73,10 @@ const notifyArtisanNewJob = (artisan, reservation) =>
  *
  * @param {{ phone: string }} client
  */
-const notifyClientArtisanCancelled = (client) =>
+const notifyClientWorkerCancelled = (client) =>
   sendSms(
     client.phone,
-    "FixNow : l'artisan assigné a annulé votre intervention. Nous recherchons un remplaçant."
+    "Maalam Expert : l'artisan assigné a annulé votre intervention. Nous recherchons un remplaçant."
   );
 
-module.exports = { sendSms, notifyArtisanNewJob, notifyClientArtisanCancelled };
+module.exports = { sendSms, notifyWorkerNewJob, notifyClientWorkerCancelled };

@@ -1,11 +1,13 @@
+import { useTranslation } from 'react-i18next';
 import ArtisanList from '../components/ArtisanList';
 
 export default function SearchPage() {
+  const { t } = useTranslation();
   return (
     <div className="page-container py-10">
-      <h1 className="section-title">Trouver un artisan</h1>
+      <h1 className="section-title">{t('search.title')}</h1>
       <p className="section-subtitle mb-6">
-        Filtrez par métier, ville ou note pour trouver le professionnel qu'il vous faut.
+        {t('search.subtitle')}
       </p>
       <ArtisanList />
     </div>

@@ -26,7 +26,7 @@ router.get('/search', blogController.getAllPosts);
 router.get('/categories', blogController.getCategories);
 router.get('/:slug', blogController.getPostBySlug);
 
-// --- Administration (équipe FixNow) ---
+// --- Administration (équipe Maalam Expert) ---
 router.post('/', protectAdmin, validate(schemas.createBlogPost), blogController.createPost);
 router.put('/:id', protectAdmin, validate(schemas.updateBlogPost), blogController.updatePost);
 router.delete('/:id', protectAdmin, blogController.deletePost);

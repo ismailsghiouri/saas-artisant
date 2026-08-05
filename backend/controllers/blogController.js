@@ -76,7 +76,7 @@ const getPostBySlug = asyncHandler(async (req, res, next) => {
 
 /**
  * POST /api/blog
- * Création d'un article (accès réservé à l'équipe FixNow — protectAdmin).
+ * Création d'un article (accès réservé à l'équipe Maalam Expert — protectAdmin).
  */
 const createPost = asyncHandler(async (req, res, next) => {
   const existing = await BlogPost.findOne({ slug: req.body.slug });

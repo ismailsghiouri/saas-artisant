@@ -117,10 +117,10 @@ function ClientReservationCard({ reservation, onRefresh }) {
 
       <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{reservation.description}</p>
 
-      {reservation.artisan && (
+      {reservation.worker && (
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-          Artisan assigné : <span className="font-medium">{reservation.artisan.fullName}</span> (
-          {reservation.artisan.phone})
+          Artisan assigné : <span className="font-medium">{reservation.worker.name}</span> (
+          {reservation.worker.phone})
         </p>
       )}
 
@@ -187,7 +187,7 @@ function ArtisanReservationCard({ reservation, onRefresh }) {
 
       {reservation.client && (
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-          Client : <span className="font-medium">{reservation.client.fullName}</span> (
+          Client : <span className="font-medium">{reservation.client.name}</span> (
           {reservation.client.phone})
         </p>
       )}
@@ -302,12 +302,12 @@ export default function MyReservationsPage() {
     <div className="page-container py-10">
       <h1 className="section-title">Mes réservations</h1>
       <p className="section-subtitle mb-6">
-        {role === 'artisan'
+        {role === 'worker'
           ? 'Gérez vos interventions assignées et découvrez de nouvelles demandes.'
           : 'Suivez le statut de vos demandes d\'intervention.'}
       </p>
 
-      {role === 'artisan' && (
+      {role === 'worker' && (
         <div className="mb-6 flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-sm font-medium sm:w-96">
           {[
             { value: 'mine', label: 'Mes missions' },
@@ -328,7 +328,7 @@ export default function MyReservationsPage() {
         </div>
       )}
 
-      {role === 'artisan' && tab === 'available' ? (
+      {role === 'worker' && tab === 'available' ? (
         <AvailableJobsPanel onRefreshMine={reload} />
       ) : (
         <>
@@ -339,7 +339,7 @@ export default function MyReservationsPage() {
           )}
           <div className="grid gap-4 sm:grid-cols-2">
             {reservations.map((reservation) =>
-              role === 'artisan' ? (
+              role === 'worker' ? (
                 <ArtisanReservationCard
                   key={reservation._id}
                   reservation={reservation}

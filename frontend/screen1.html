@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RAGDoc-Assistant | T3 2023 Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;family=JetBrains+Mono:wght@450&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#fefcff",
+                    "on-error-container": "#93000a",
+                    "surface-container-low": "#f2f4f6",
+                    "primary": "#004ac6",
+                    "surface-container": "#eceef0",
+                    "tertiary-fixed": "#6ffbbe",
+                    "surface": "#f7f9fb",
+                    "error": "#ba1a1a",
+                    "on-background": "#191c1e",
+                    "on-surface-variant": "#434655",
+                    "tertiary-container": "#007d55",
+                    "on-primary-container": "#eeefff",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "inverse-primary": "#b4c5ff",
+                    "secondary": "#0058be",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "secondary-container": "#2170e4",
+                    "on-primary-fixed": "#00174b",
+                    "surface-variant": "#e0e3e5",
+                    "on-surface": "#191c1e",
+                    "primary-fixed": "#dbe1ff",
+                    "surface-tint": "#0053db",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#002113",
+                    "outline": "#737686",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-secondary-fixed": "#001a42",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-container-high": "#e6e8ea",
+                    "surface-dim": "#d8dadc",
+                    "on-tertiary-container": "#bdffdb",
+                    "surface-bright": "#f7f9fb",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "inverse-surface": "#2d3133",
+                    "outline-variant": "#c3c6d7",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "background": "#f7f9fb",
+                    "tertiary": "#006242",
+                    "primary-container": "#2563eb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "sidebar-width": "320px",
+                    "stack-md": "1rem",
+                    "stack-sm": "0.5rem",
+                    "gutter": "1.5rem",
+                    "container-max": "1440px",
+                    "stack-lg": "2rem"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "code-sm": ["JetBrains Mono"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "code-sm": ["13px", {"lineHeight": "20px", "fontWeight": "450"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .citation-badge {
+            background-color: #10b981;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+        .searching-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface overflow-hidden">
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center h-16 px-gutter w-full sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+<div class="flex items-center space-x-4">
+<span class="font-headline-sm text-headline-sm font-black text-primary">RAGDoc-Assistant</span>
+<nav class="hidden md:flex ml-8 space-x-6">
+<a class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-2" href="#">Chat</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-all" href="#">Sources</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-all" href="#">Intelligence</a>
+</nav>
+</div>
+<div class="flex items-center space-x-stack-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container rounded-full border-none text-body-sm w-64 focus:ring-2 focus:ring-primary" placeholder="Search insights..." type="text"/>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-fixed-dim flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a business executive in a high-key studio setting, conveying confidence and intelligence. The lighting is soft and flattering, emphasizing clean lines and a modern corporate aesthetic with a neutral, slightly blue-tinted background consistent with a premium SaaS tool interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArDVtPh-rmj_kDZt1_WEjtmhai-8Hvx3DfwHF3TiNHwXDUgTk-BlbyMsLISGUojmqyGLrZybzeYRdpPrxWYcqU_exvn0Q9n8dfRVwoC4SSskRmLBogL9JkDVq3_YV6u5CeoiNdTqugmBXJsgrJgXgEiuERvOIMo37_phcpdnn4YccxA1u2tdfzJyJ5KfQZ7558ZKgelhWfKDyG3Bmv2fmaEEhSpMAPpH88ljrn6Stm7AIfihfpC6fVQA"/>
+</div>
+</div>
+</header>
+<div class="flex h-[calc(100vh-64px)]">
+<!-- Left Sidebar (History/Docs) -->
+<aside class="flex flex-col h-full border-r border-outline-variant bg-surface-container-low w-sidebar-width flex-shrink-0">
+<div class="p-4 border-b border-outline-variant">
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-xl font-body-md flex items-center justify-center space-x-2 active:scale-95 duration-150 shadow-sm">
+<span class="material-symbols-outlined">add_comment</span>
+<span>New Chat</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto py-4">
+<div class="px-4 mb-2">
+<h3 class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Recents</h3>
+</div>
+<div class="space-y-1">
+<div class="px-4 py-3 bg-surface-variant border-l-4 border-primary cursor-pointer">
+<p class="font-body-sm text-on-surface font-bold truncate">Q3 2023 Results Analysis</p>
+<p class="text-xs text-outline mt-1">2 hours ago</p>
+</div>
+<div class="px-4 py-3 hover:bg-surface-variant transition-colors cursor-pointer group">
+<p class="font-body-sm text-on-surface-variant group-hover:text-on-surface truncate">Legal Compliance Check</p>
+<p class="text-xs text-outline mt-1">Yesterday</p>
+</div>
+<div class="px-4 py-3 hover:bg-surface-variant transition-colors cursor-pointer group">
+<p class="font-body-sm text-on-surface-variant group-hover:text-on-surface truncate">Employee Handbook Update</p>
+<p class="text-xs text-outline mt-1">3 days ago</p>
+</div>
+</div>
+<div class="px-4 mt-8 mb-2">
+<h3 class="font-label-caps text-label-caps text-outline uppercase tracking-wider">Documents</h3>
+</div>
+<div class="px-4 space-y-3">
+<div class="flex items-center space-x-3 p-2 border border-outline-variant rounded-lg bg-surface-container-lowest">
+<span class="material-symbols-outlined text-tertiary">description</span>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-semibold truncate">Rapport_Annuel_2023.pdf</p>
+<p class="text-[10px] text-outline">4.2 MB • Indexed</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-outline-variant">
+<div class="flex items-center space-x-3 p-2 hover:bg-surface-variant rounded-lg transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-on-surface-variant">account_circle</span>
+<span class="font-body-sm text-on-surface-variant">Account Settings</span>
+</div>
+</div>
+</aside>
+<!-- Center Chat Area -->
+<main class="flex-1 flex flex-col bg-background relative">
+<!-- Chat Scrollable Container -->
+<div class="flex-1 overflow-y-auto px-gutter py-8">
+<div class="max-w-[800px] mx-auto space-y-8">
+<!-- User Message -->
+<div class="flex flex-col items-end space-y-2">
+<div class="max-w-[80%] bg-surface-container-lowest border border-outline-variant p-4 rounded-2xl rounded-tr-none shadow-sm">
+<p class="font-body-md text-on-surface">Quels sont les résultats du T3 2023 ?</p>
+</div>
+<span class="text-[10px] text-outline px-2">Envoyé à 14:22</span>
+</div>
+<!-- Assistant Response -->
+<div class="flex flex-col items-start space-y-3">
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-white" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<span class="font-label-caps text-label-caps text-primary">RAGDoc Assistant</span>
+</div>
+<div class="max-w-[90%] bg-blue-50 border border-blue-100 p-6 rounded-2xl rounded-tl-none space-y-4">
+<p class="font-body-md text-on-surface leading-relaxed">
+                                Selon le <span class="font-bold underline decoration-primary/30">Rapport Annuel 2023</span> <span class="citation-badge">1</span>, le chiffre d'affaires du troisième trimestre a augmenté de <span class="text-primary font-bold">15%</span> par rapport à l'année précédente, atteignant 4.2 milliards d'euros. Cette croissance a été principalement tirée par une forte performance dans le secteur des services cloud et une expansion sur les marchés asiatiques.
+                            </p>
+<!-- Trust Indicator -->
+<div class="flex items-center space-x-4 pt-2 border-t border-blue-200/50">
+<div class="flex items-center space-x-1 text-tertiary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-[11px] font-bold">High Confidence</span>
+</div>
+<div class="text-[11px] text-outline">
+                                    Time to retrieve: <span class="text-on-surface font-semibold">1.4s</span>
+</div>
+<div class="text-[11px] text-outline">
+                                    Sources scanned: <span class="text-on-surface font-semibold">12 docs</span>
+</div>
+</div>
+</div>
+<!-- Feedback Icons -->
+<div class="flex items-center space-x-2 px-2">
+<button class="p-1 hover:bg-surface-variant rounded transition-colors">
+<span class="material-symbols-outlined text-sm text-outline">thumb_up</span>
+</button>
+<button class="p-1 hover:bg-surface-variant rounded transition-colors">
+<span class="material-symbols-outlined text-sm text-outline">thumb_down</span>
+</button>
+<button class="p-1 hover:bg-surface-variant rounded transition-colors">
+<span class="material-symbols-outlined text-sm text-outline">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Status Indicator (Searching) -->
+<div class="flex items-center space-x-3 text-primary searching-pulse py-4">
+<span class="material-symbols-outlined animate-spin">cyclone</span>
+<span class="font-body-sm font-semibold">Searching in documents...</span>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="px-gutter pb-gutter pt-2 bg-background">
+<div class="max-w-[800px] mx-auto">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-2 shadow-lg focus-within:ring-2 focus-within:ring-primary transition-all">
+<textarea class="w-full bg-transparent border-none focus:ring-0 font-body-md min-h-[48px] max-h-[200px] resize-none px-4 py-2" placeholder="Ask another question about your documents..."></textarea>
+<div class="flex items-center justify-between mt-2 border-t border-outline-variant/30 pt-2 px-2">
+<div class="flex space-x-1">
+<button class="p-2 hover:bg-surface-variant rounded-lg text-on-surface-variant transition-colors" title="Upload Document">
+<span class="material-symbols-outlined">upload_file</span>
+</button>
+<button class="p-2 hover:bg-surface-variant rounded-lg text-on-surface-variant transition-colors" title="Prompt Settings">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+<button class="bg-primary text-white p-2 rounded-xl flex items-center space-x-2 px-4 active:scale-95 transition-all">
+<span class="font-bold text-sm">Send</span>
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+<p class="text-[10px] text-center text-outline mt-3">Verified by RAG Engine • Secure Enterprise AI</p>
+</div>
+</div>
+</main>
+<!-- Right Sidebar (Sources) -->
+<aside class="w-[320px] h-full border-l border-outline-variant bg-surface flex flex-col">
+<div class="p-gutter border-b border-outline-variant flex items-center justify-between">
+<h2 class="font-headline-md text-sm font-bold uppercase tracking-widest text-on-surface">Sources Citées</h2>
+<span class="bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded text-[10px] font-bold">1 Document Found</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4">
+<!-- Source Card [1] -->
+<div class="group border-l-4 border-tertiary bg-surface-container-lowest border-y border-r border-outline-variant rounded-r-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between mb-3">
+<div class="flex items-center space-x-2">
+<span class="w-5 h-5 flex items-center justify-center bg-tertiary text-white text-[10px] font-bold rounded">1</span>
+<h4 class="font-body-sm font-bold text-on-surface truncate max-w-[150px]">Rapport Annuel 2023</h4>
+</div>
+<span class="text-[10px] font-bold text-tertiary bg-tertiary-container/20 px-1.5 py-0.5 rounded">98% Rel.</span>
+</div>
+<p class="font-code-sm text-code-sm text-on-surface-variant line-clamp-4 leading-relaxed mb-4 p-2 bg-surface rounded border border-outline-variant/10 italic">
+                        "...les résultats du troisième trimestre montrent une résilience opérationnelle avec un chiffre d'affaires consolidé en hausse de 15%. Cette dynamique est soutenue par l'adoption massive de nos solutions d'intelligence documentaire..."
+                    </p>
+<div class="flex items-center justify-between">
+<span class="text-[11px] text-outline font-semibold uppercase">Page 12 • PDF</span>
+<button class="text-primary font-bold text-[11px] flex items-center hover:underline">
+                            View Document
+                            <span class="material-symbols-outlined text-xs ml-1">open_in_new</span>
+</button>
+</div>
+</div>
+<!-- Empty state for secondary visual density -->
+<div class="p-8 border border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center opacity-40">
+<span class="material-symbols-outlined text-3xl mb-2">find_in_page</span>
+<p class="text-xs font-medium text-center">Reference metadata will appear here during analysis</p>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low border-t border-outline-variant">
+<div class="flex items-center justify-between text-xs text-outline mb-2">
+<span>Processing Engine:</span>
+<span class="text-on-surface font-semibold">Titan-v4.2</span>
+</div>
+<div class="w-full bg-outline-variant h-1 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[85%]"></div>
+</div>
+</div>
+</aside>
+</div>
+<!-- Background Atmospheric Effect (Shader Placeholder) -->
+<div class="fixed inset-0 pointer-events-none -z-10 opacity-30">
+
+</div>
+<script>
+        // Micro-interactions
+        document.querySelectorAll('.citation-badge').forEach(badge => {
+            badge.addEventListener('mouseenter', () => {
+                // In a real app, this would highlight the source card
+                console.log('Highlighting Source [1]');
+            });
+        });
+
+        // Auto-expand textarea
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    </script>
+</body></html>

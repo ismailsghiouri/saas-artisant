@@ -10,7 +10,7 @@ const MID_AD_WORD_THRESHOLD = 500;
 const countWords = (text = '') => (text.trim() ? text.trim().split(/\s+/).length : 0);
 
 /**
- * Découpe le HTML de l'article (rédigé par l'équipe FixNow via AdminDashboard,
+ * Découpe le HTML de l'article (rédigé par l'équipe Maalam Expert via AdminDashboard,
  * une route protégée par protectAdmin — ce n'est pas une saisie utilisateur)
  * en blocs de premier niveau. Chaque titre h2/h3 reçoit un id pour la table
  * des matières, et on repère la frontière de bloc la plus proche de 500 mots
@@ -163,7 +163,7 @@ function RelatedPosts({ category, excludeSlug }) {
 // dans le navigateur (par slug d'article) plutôt que de simuler un faux appel
 // réseau qui donnerait l'illusion d'une persistance partagée.
 function CommentsSection({ slug }) {
-  const storageKey = `fixnow_comments_${slug}`;
+  const storageKey = `maalam_expert_comments_${slug}`;
   const [comments, setComments] = useState([]);
   const [name, setName] = useState('');
   const [text, setText] = useState('');
@@ -254,7 +254,7 @@ export default function BlogArticle({ post }) {
     const metaDescription = document.querySelector('meta[name="description"]');
     const previousDescription = metaDescription?.getAttribute('content');
 
-    document.title = post.seoTitle || `${post.title} — FixNow Blog`;
+    document.title = post.seoTitle || `${post.title} — Maalam Expert Blog`;
     if (metaDescription) {
       metaDescription.setAttribute('content', post.seoDescription || post.excerpt || '');
     }
@@ -298,12 +298,12 @@ export default function BlogArticle({ post }) {
 
       <TableOfContents items={toc} />
 
-      <div className="prose-fixnow" dangerouslySetInnerHTML={{ __html: beforeAd }} />
+      <div className="prose-maalam-expert" dangerouslySetInnerHTML={{ __html: beforeAd }} />
 
       {afterAd && (
         <>
           <AdSlot slotId="blog-article-middle" className="my-8 h-24" />
-          <div className="prose-fixnow" dangerouslySetInnerHTML={{ __html: afterAd }} />
+          <div className="prose-maalam-expert" dangerouslySetInnerHTML={{ __html: afterAd }} />
         </>
       )}
 

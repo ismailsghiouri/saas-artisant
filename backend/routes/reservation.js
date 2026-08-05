@@ -7,42 +7,59 @@
  * consultation par id sont ouvertes aux deux rôles (le contrôleur vérifie
  * ensuite que l'utilisateur est bien partie prenante de la réservation).
  *
- * Les routes statiques (/me, /artisan/me, /available) sont déclarées avant
- * la route paramétrée "/:id" pour éviter tout conflit de matching Express.
+ * Le listing "mes réservations" vit désormais sous l'espace propre à chaque
+ * rôle : GET /api/clients/reservations et GET /api/workers/reservations
+ * (voir routes/client.js et routes/worker.js).
+ *
+ * La route statique "/available" est déclarée avant la route paramétrée
+ * "/:id" pour éviter tout conflit de matching Express.
  * -----------------------------------------------------------------------------
  */
 
 const express = require('express');
 const reservationController = require('../controllers/reservationController');
-const { protect } = require('../middleware/auth');
+const { auth, requireRole } = require('../middleware/auth');
 const { validate, schemas } = require('../middleware/validation');
 
 const router = express.Router();
 
 router.post(
   '/',
-  protect('client'),
+  auth,
+  requireRole('client'),
   validate(schemas.createReservation),
   reservationController.createReservation
 );
 
-router.get('/me', protect('client'), reservationController.getMyReservationsAsClient);
-router.get('/artisan/me', protect('artisan'), reservationController.getMyReservationsAsArtisan);
-router.get('/available', protect('artisan'), reservationController.getAvailableJobsForArtisan);
+router.post(
+  '/direct',
+  auth,
+  requireRole('client'),
+  validate(schemas.createDirectReservation),
+  reservationController.createDirectReservation
+);
 
-router.get('/:id', protect(), reservationController.getReservationById);
+router.get(
+  '/available',
+  auth,
+  requireRole('worker'),
+  reservationController.getAvailableJobsForWorker
+);
 
-router.patch('/:id/accept', protect('artisan'), reservationController.acceptReservation);
-router.patch('/:id/start', protect('artisan'), reservationController.startReservation);
+router.get('/:id', auth, reservationController.getReservationById);
+
+router.patch('/:id/accept', auth, requireRole('worker'), reservationController.acceptReservation);
+router.patch('/:id/start', auth, requireRole('worker'), reservationController.startReservation);
 router.patch(
   '/:id/complete',
-  protect('artisan'),
+  auth,
+  requireRole('worker'),
   validate(schemas.completeReservation),
   reservationController.completeReservation
 );
 router.patch(
   '/:id/cancel',
-  protect(),
+  auth,
   validate(schemas.cancelReservation),
   reservationController.cancelReservation
 );
@@ -50,16 +67,17 @@ router.patch(
 // Alias REST (PUT/DELETE) équivalents aux routes PATCH ci-dessus, pour les
 // clients HTTP qui attendent ces verbes sur des actions de transition
 // d'état plutôt que des PATCH sémantiques.
-router.put('/:id/confirm', protect('artisan'), reservationController.acceptReservation);
+router.put('/:id/confirm', auth, requireRole('worker'), reservationController.acceptReservation);
 router.put(
   '/:id/complete',
-  protect('artisan'),
+  auth,
+  requireRole('worker'),
   validate(schemas.completeReservation),
   reservationController.completeReservation
 );
 router.delete(
   '/:id',
-  protect(),
+  auth,
   validate(schemas.cancelReservation),
   reservationController.cancelReservation
 );

@@ -8,20 +8,20 @@
 
 const express = require('express');
 const reviewController = require('../controllers/reviewController');
-const { protect } = require('../middleware/auth');
+const { auth, requireRole } = require('../middleware/auth');
 const { validate, schemas } = require('../middleware/validation');
 
 const router = express.Router();
 
-router.post('/', protect('client'), validate(schemas.createReview), reviewController.createReview);
+router.post('/', auth, requireRole('client'), validate(schemas.createReview), reviewController.createReview);
 
-// "/" avec ?artisan_id=X et "/artisan/:artisanId" pointent vers le même
-// contrôleur (voir reviewController.getArtisanReviews), qui accepte l'id
+// "/" avec ?worker_id=X et "/worker/:workerId" pointent vers le même
+// contrôleur (voir reviewController.getWorkerReviews), qui accepte l'id
 // artisan sous les deux formes.
-router.get('/', reviewController.getArtisanReviews);
-router.get('/artisan/:artisanId', reviewController.getArtisanReviews);
+router.get('/', reviewController.getWorkerReviews);
+router.get('/worker/:workerId', reviewController.getWorkerReviews);
 
-router.put('/:id', protect('client'), validate(schemas.updateReview), reviewController.updateReview);
-router.delete('/:id', protect('client'), reviewController.deleteReview);
+router.put('/:id', auth, requireRole('client'), validate(schemas.updateReview), reviewController.updateReview);
+router.delete('/:id', auth, requireRole('client'), reviewController.deleteReview);
 
 module.exports = router;

@@ -6,7 +6,7 @@
  * d'unicité sur "reservation").
  *
  * À chaque création d'avis, la note moyenne de l'artisan concerné est
- * recalculée automatiquement (hook post-save) afin que Artisan.rating reste
+ * recalculée automatiquement (hook post-save) afin que Worker.rating reste
  * toujours cohérent avec la collection Review, sans job de synchronisation
  * séparé.
  * -----------------------------------------------------------------------------
@@ -27,9 +27,9 @@ const reviewSchema = new mongoose.Schema(
       ref: 'Client',
       required: [true, "L'avis doit être associé à un client."],
     },
-    artisan: {
+    worker: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Artisan',
+      ref: 'Worker',
       required: [true, "L'avis doit être associé à un artisan."],
     },
     rating: {
@@ -50,23 +50,23 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
-reviewSchema.index({ artisan: 1, createdAt: -1 });
+reviewSchema.index({ worker: 1, createdAt: -1 });
 
 /**
  * Recalcule la note moyenne et le nombre d'avis d'un artisan à partir de
  * l'ensemble de ses avis en base. Exposée en méthode statique pour pouvoir
  * être appelée aussi bien après création que suppression d'un avis.
  *
- * @param {mongoose.Types.ObjectId} artisanId
+ * @param {mongoose.Types.ObjectId} workerId
  */
-reviewSchema.statics.recalculateArtisanRating = async function recalculateArtisanRating(artisanId) {
-  const Artisan = mongoose.model('Artisan');
+reviewSchema.statics.recalculateWorkerRating = async function recalculateWorkerRating(workerId) {
+  const Worker = mongoose.model('Worker');
 
   const stats = await this.aggregate([
-    { $match: { artisan: artisanId } },
+    { $match: { worker: workerId } },
     {
       $group: {
-        _id: '$artisan',
+        _id: '$worker',
         avgRating: { $avg: '$rating' },
         count: { $sum: 1 },
       },
@@ -74,21 +74,21 @@ reviewSchema.statics.recalculateArtisanRating = async function recalculateArtisa
   ]);
 
   if (stats.length > 0) {
-    await Artisan.findByIdAndUpdate(artisanId, {
-      'rating.average': Math.round(stats[0].avgRating * 10) / 10,
-      'rating.count': stats[0].count,
+    await Worker.findByIdAndUpdate(workerId, {
+      rating: Math.round(stats[0].avgRating * 10) / 10,
+      totalReviews: stats[0].count,
     });
   } else {
     // Plus aucun avis pour cet artisan (cas d'une suppression) : on remet à zéro.
-    await Artisan.findByIdAndUpdate(artisanId, {
-      'rating.average': 0,
-      'rating.count': 0,
+    await Worker.findByIdAndUpdate(workerId, {
+      rating: 0,
+      totalReviews: 0,
     });
   }
 };
 
-reviewSchema.post('save', async function updateArtisanRatingAfterSave(doc) {
-  await doc.constructor.recalculateArtisanRating(doc.artisan);
+reviewSchema.post('save', async function updateWorkerRatingAfterSave(doc) {
+  await doc.constructor.recalculateWorkerRating(doc.worker);
 });
 
 module.exports = mongoose.model('Review', reviewSchema);

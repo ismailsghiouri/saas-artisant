@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #e2e8f0;
+        }
+        .sidebar-item-active {
+            position: relative;
+        }
+        .sidebar-item-active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 16px;
+            width: 3px;
+            background-color: #004ac6;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-secondary-container": "#fefcff",
+                "on-error-container": "#93000a",
+                "surface-container-low": "#f2f4f6",
+                "primary": "#004ac6",
+                "surface-container": "#eceef0",
+                "tertiary-fixed": "#6ffbbe",
+                "surface": "#f7f9fb",
+                "error": "#ba1a1a",
+                "on-background": "#191c1e",
+                "on-surface-variant": "#434655",
+                "tertiary-container": "#007d55",
+                "on-primary-container": "#eeefff",
+                "primary-fixed-dim": "#b4c5ff",
+                "on-secondary-fixed-variant": "#004395",
+                "inverse-primary": "#b4c5ff",
+                "secondary": "#0058be",
+                "on-secondary": "#ffffff",
+                "inverse-on-surface": "#eff1f3",
+                "secondary-container": "#2170e4",
+                "on-primary-fixed": "#00174b",
+                "surface-variant": "#e0e3e5",
+                "on-surface": "#191c1e",
+                "primary-fixed": "#dbe1ff",
+                "surface-tint": "#0053db",
+                "on-primary": "#ffffff",
+                "on-tertiary-fixed": "#002113",
+                "outline": "#737686",
+                "error-container": "#ffdad6",
+                "surface-container-highest": "#e0e3e5",
+                "on-secondary-fixed": "#001a42",
+                "tertiary-fixed-dim": "#4edea3",
+                "on-primary-fixed-variant": "#003ea8",
+                "on-tertiary": "#ffffff",
+                "secondary-fixed": "#d8e2ff",
+                "surface-container-high": "#e6e8ea",
+                "surface-dim": "#d8dadc",
+                "on-tertiary-container": "#bdffdb",
+                "surface-bright": "#f7f9fb",
+                "on-error": "#ffffff",
+                "surface-container-lowest": "#ffffff",
+                "secondary-fixed-dim": "#adc6ff",
+                "inverse-surface": "#2d3133",
+                "outline-variant": "#c3c6d7",
+                "on-tertiary-fixed-variant": "#005236",
+                "background": "#f7f9fb",
+                "tertiary": "#006242",
+                "primary-container": "#2563eb"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "sidebar-width": "320px",
+                "stack-md": "1rem",
+                "stack-sm": "0.5rem",
+                "gutter": "1.5rem",
+                "container-max": "1440px",
+                "stack-lg": "2rem"
+            },
+            "fontFamily": {
+                "body-sm": ["Inter"],
+                "headline-lg": ["Inter"],
+                "label-caps": ["Inter"],
+                "code-sm": ["JetBrains Mono"],
+                "body-md": ["Inter"],
+                "headline-md": ["Inter"],
+                "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "code-sm": ["13px", {"lineHeight": "20px", "fontWeight": "450"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar - Identity: RAGDoc AI -->
+<aside class="flex flex-col h-full border-r border-outline-variant dark:border-outline bg-surface-container-low dark:bg-surface-container-lowest h-screen w-sidebar-width flex-shrink-0">
+<div class="p-gutter flex flex-col gap-6 h-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">dataset</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">RAGDoc AI</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant opacity-70">Enterprise Assistant</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 py-3 bg-primary text-on-primary rounded-xl font-body-md hover:bg-primary-container transition-all active:scale-95 duration-150">
+<span class="material-symbols-outlined">upload_file</span>
+<span>Upload Document</span>
+</button>
+<nav class="flex-1 space-y-1">
+<div class="px-2 py-2 cursor-pointer active:scale-95 duration-150 hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors rounded-lg flex items-center gap-3 text-on-surface-variant dark:text-outline font-body-sm text-body-sm">
+<span class="material-symbols-outlined">add_comment</span>
+<span>New Chat</span>
+</div>
+<!-- ACTIVE STATE: History -->
+<div class="px-2 py-2 cursor-pointer active:scale-95 duration-150 transition-colors rounded-lg flex flex-col gap-1 sidebar-item-active text-primary dark:text-primary-fixed-dim font-bold bg-surface-container">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-body-sm text-body-sm">History</span>
+</div>
+<div class="ml-9 mt-2 flex flex-col gap-2 opacity-90">
+<div class="text-xs py-1 px-2 hover:bg-primary/10 rounded transition-all truncate border-l border-primary/20">Analyse T3 2023</div>
+<div class="text-xs py-1 px-2 hover:bg-primary/10 rounded transition-all truncate border-l border-primary/20">Politique de télétravail</div>
+</div>
+</div>
+<div class="px-2 py-2 cursor-pointer active:scale-95 duration-150 hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors rounded-lg flex items-center gap-3 text-on-surface-variant dark:text-outline font-body-sm text-body-sm">
+<span class="material-symbols-outlined">description</span>
+<span>Library</span>
+</div>
+<div class="px-2 py-2 cursor-pointer active:scale-95 duration-150 hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors rounded-lg flex items-center gap-3 text-on-surface-variant dark:text-outline font-body-sm text-body-sm">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</div>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-4">
+<div class="px-2 py-2 cursor-pointer active:scale-95 duration-150 hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors rounded-lg flex items-center gap-3 text-on-surface-variant dark:text-outline font-body-sm text-body-sm">
+<span class="material-symbols-outlined">account_circle</span>
+<span>Account</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-background overflow-hidden relative">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-16 px-gutter w-full sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant dark:border-outline">
+<div class="flex items-center space-x-stack-md">
+<span class="font-headline-sm text-headline-sm font-black text-primary dark:text-primary-fixed">RAGDoc-Assistant</span>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex items-center space-x-6">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-all" href="#">Chat</a>
+<a class="font-label-caps text-label-caps text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-2" href="#">Sources</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-all" href="#">Intelligence</a>
+</nav>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined p-2 hover:bg-surface-container rounded-full cursor-pointer transition-colors text-on-surface-variant">notifications</span>
+<span class="material-symbols-outlined p-2 hover:bg-surface-container rounded-full cursor-pointer transition-colors text-on-surface-variant">help_outline</span>
+<img class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A clean, professional headshot of a corporate user with a focused, intelligent expression, set against a blurred office environment with soft morning light, 8k resolution, modern professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdHPVTpbORPEW5wdwSaQTkmeVz82NXtQymcicorinWiqvL2NXMJdUNQ1W13wUelsQwmnIb_yxyI4sMPeKIcTnzzsCFFb4askbeG38ruAv9LjmRGNSyBfE0yRMeOm2X0L_FbJfHcnE1slMDTPRp0h4gI75-TvwMITJ-yncH1XHXknt99DePhb2uWEFoTDWKf33g40_5leTqLcEYrsh_HEPbmqX12t95AtbTMBHP_emiG1pBiQFxzwYDOQ"/>
+</div>
+</div>
+</header>
+<!-- Knowledge Base Content -->
+<div class="flex-1 overflow-y-auto">
+<div class="max-w-6xl mx-auto p-gutter space-y-stack-lg">
+<!-- Header Action Row -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-gutter">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Your Knowledge Base</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Manage the ground-truth documents your assistant uses to generate responses.</p>
+</div>
+<div class="flex gap-stack-sm">
+<button class="px-6 py-2.5 bg-primary text-on-primary rounded-lg font-body-md font-semibold hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                                Upload New Documents
+                            </button>
+</div>
+</div>
+<!-- Statistics / Bento Quick View -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md">
+<div class="p-stack-md glass-card rounded-xl">
+<p class="font-label-caps text-label-caps text-outline uppercase">Total Documents</p>
+<h3 class="font-headline-md text-headline-md text-primary mt-1">14</h3>
+</div>
+<div class="p-stack-md glass-card rounded-xl">
+<p class="font-label-caps text-label-caps text-outline uppercase">Tokens Indexed</p>
+<h3 class="font-headline-md text-headline-md text-primary mt-1">1.2M</h3>
+</div>
+<div class="p-stack-md glass-card rounded-xl">
+<p class="font-label-caps text-label-caps text-outline uppercase">Storage Used</p>
+<h3 class="font-headline-md text-headline-md text-primary mt-1">42.5 MB</h3>
+</div>
+</div>
+<!-- Document Table / List -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant bg-surface-container-low">
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant">Document Name</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant">Upload Date</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant">Status</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-red-600">picture_as_pdf</span>
+<span class="font-body-md font-semibold text-on-surface">Rapport Financier 2023.pdf</span>
+</div>
+</td>
+<td class="px-6 py-4 font-code-sm text-code-sm text-on-surface-variant">Dec 12, 2023</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-xs font-bold">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                                Indexed
+                                            </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2">
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant hover:text-primary transition-colors">visibility</span>
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant hover:text-error transition-colors">delete</span>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">description</span>
+<span class="font-body-md font-semibold text-on-surface">Guide RH 2024.docx</span>
+</div>
+</td>
+<td class="px-6 py-4 font-code-sm text-code-sm text-on-surface-variant">Jan 05, 2024</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-xs font-bold">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                                Indexed
+                                            </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2">
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant hover:text-primary transition-colors">visibility</span>
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant hover:text-error transition-colors">delete</span>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">table_chart</span>
+<span class="font-body-md font-semibold text-on-surface">Data_Exports_Productivity.xlsx</span>
+</div>
+</td>
+<td class="px-6 py-4 font-code-sm text-code-sm text-on-surface-variant">Feb 18, 2024</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-xs font-bold">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                                Indexed
+                                            </span>
+</td>
+<td class="px-6 py-4">
+<div class="flex gap-2">
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant hover:text-primary transition-colors">visibility</span>
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant hover:text-error transition-colors">delete</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Trust indicators Footer -->
+<div class="flex items-center justify-between py-6 border-t border-outline-variant">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-tertiary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                                Verified by RAG
+                            </div>
+<div class="text-on-surface-variant font-label-caps text-label-caps opacity-60">
+                                14 sources scanned for active intelligence.
+                            </div>
+</div>
+<div class="text-on-surface-variant font-code-sm text-code-sm">
+                            Last index update: 42m ago
+                        </div>
+</div>
+</div>
+</div>
+</main>
+<!-- Context/Source Sidebar (Desktop Only) -->
+<aside class="hidden xl:flex flex-col w-[320px] bg-surface-container-low border-l border-outline-variant">
+<div class="p-6 h-full flex flex-col gap-gutter">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Intelligence Context</h4>
+<div class="space-y-4">
+<p class="font-body-sm text-body-sm text-on-surface-variant">Your current "Intelligence Context" is derived from these top-performing documents.</p>
+<div class="space-y-3">
+<div class="p-3 bg-white border-t-2 border-tertiary rounded-lg shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-tertiary">98% Relevance</span>
+<span class="font-code-sm text-[10px] text-on-surface-variant">#DOC-012</span>
+</div>
+<p class="font-body-sm font-semibold text-on-surface mb-1 truncate">Rapport Financier 2023</p>
+<p class="font-code-sm text-code-sm text-on-surface-variant line-clamp-3">
+                                Detailed analysis of fiscal growth and Q4 performance markers including international revenue...
+                            </p>
+</div>
+<div class="p-3 bg-white border-t-2 border-tertiary rounded-lg shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-tertiary">92% Relevance</span>
+<span class="font-code-sm text-[10px] text-on-surface-variant">#DOC-044</span>
+</div>
+<p class="font-body-sm font-semibold text-on-surface mb-1 truncate">Guide RH 2024</p>
+<p class="font-code-sm text-code-sm text-on-surface-variant line-clamp-3">
+                                Standard operating procedures for remote work and departmental guidelines updated for...
+                            </p>
+</div>
+</div>
+</div>
+<div class="mt-auto p-4 bg-primary/5 rounded-xl border border-primary/10">
+<div class="flex items-center gap-2 text-primary font-bold mb-2">
+<span class="material-symbols-outlined">speed</span>
+<span class="font-label-caps text-label-caps">System Performance</span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[11px]">
+<span class="text-on-surface-variant">Retrieval Latency</span>
+<span class="text-on-surface font-bold">142ms</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<!-- Background Atmospheric Effect -->
+<div class="fixed inset-0 pointer-events-none z-[-1] opacity-40">
+
+</div>
+<script>
+        // Simple micro-interaction for rows
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.cursor = 'pointer';
+            });
+        });
+    </script>
+</body></html>

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import { initials, professionLabel } from '../utils/helpers';
+import { useTranslation } from 'react-i18next';
+import { initials } from '../utils/helpers';
 
-function StarRating({ average = 0, count = 0 }) {
+function StarRating({ average = 0, count = 0, t }) {
   const rounded = Math.round(average);
   return (
     <div className="flex items-center gap-1 text-sm">
@@ -10,13 +11,14 @@ function StarRating({ average = 0, count = 0 }) {
         <span className="text-gray-300 dark:text-gray-700">{'★'.repeat(5 - rounded)}</span>
       </span>
       <span className="font-semibold text-gray-800 dark:text-gray-100">{average.toFixed(1)}</span>
-      <span className="text-gray-400">({count} avis)</span>
+      <span className="text-gray-400">({count} {t('artisanCard.reviews')})</span>
     </div>
   );
 }
 
 export default function ArtisanCard({ artisan, premium = false }) {
-  const isVerified = artisan.kycStatus === 'verified';
+  const { t } = useTranslation();
+  const isVerified = artisan.verifiedBadge === true;
 
   return (
     <Link
@@ -27,32 +29,32 @@ export default function ArtisanCard({ artisan, premium = false }) {
     >
       {premium && (
         <span className="badge absolute -top-2.5 left-4 bg-accent-500 text-white shadow-sm">
-          🌟 Premium
+          🌟 {t('artisanCard.premium')}
         </span>
       )}
 
       <div className="flex items-start gap-4">
         <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-100 dark:bg-primary-900/40 text-lg font-bold text-primary-700 dark:text-primary-300">
-          {artisan.profilePhotoUrl ? (
+          {artisan.avatarUrl ? (
             <img
-              src={artisan.profilePhotoUrl}
-              alt={artisan.fullName}
+              src={artisan.avatarUrl}
+              alt={artisan.name}
               className="h-full w-full object-cover"
             />
           ) : (
-            initials(artisan.fullName)
+            initials(artisan.name)
           )}
         </div>
 
         <div className="min-w-0 flex-1">
           <h3 className="truncate font-semibold text-gray-900 dark:text-white">
-            {artisan.fullName}
+            {artisan.name}
           </h3>
           <p className="truncate text-sm text-gray-500 dark:text-gray-400">
-            {professionLabel(artisan.profession)}
+            {t(`professions.${artisan.category.toLowerCase()}`, artisan.category)}
           </p>
           <div className="mt-1">
-            <StarRating average={artisan.rating?.average} count={artisan.rating?.count} />
+            <StarRating average={artisan.rating} count={artisan.totalReviews} t={t} />
           </div>
         </div>
       </div>
@@ -64,17 +66,17 @@ export default function ArtisanCard({ artisan, premium = false }) {
 
       <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
         {isVerified && (
-          <span className="badge bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
-            ✅ Vérifié
+          <span className="badge bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
+            ✅ {t('artisanCard.verified')}
           </span>
         )}
         {artisan.isAvailable && (
           <span className="badge bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300">
-            ⚡ Rapide
+            ⚡ {t('artisanCard.fast')}
           </span>
         )}
         <span className="ml-auto text-gray-500 dark:text-gray-400">
-          {artisan.completedJobsCount || 0} interventions
+          {artisan.completedJobsCount || 0} {t('artisanCard.interventions')}
         </span>
       </div>
     </Link>

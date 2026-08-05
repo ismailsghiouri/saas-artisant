@@ -39,7 +39,7 @@ const sendEmail = async ({ to, subject, html }) => {
 
   try {
     await emailClient.post('/emails', {
-      from: process.env.EMAIL_FROM_ADDRESS || 'FixNow <no-reply@fixnow.ma>',
+      from: process.env.EMAIL_FROM_ADDRESS || 'Maalam Expert <no-reply@maalam-expert.ma>',
       to,
       subject,
       html,
@@ -58,53 +58,53 @@ const sendEmail = async ({ to, subject, html }) => {
 
 /**
  * Email de bienvenue envoyé juste après inscription (client ou artisan).
- * @param {{ email: string, fullName: string }} user
+ * @param {{ email: string, name: string }} user
  */
 const sendWelcomeEmail = (user) =>
   sendEmail({
     to: user.email,
-    subject: 'Bienvenue sur FixNow !',
+    subject: 'Bienvenue sur Maalam Expert !',
     html: `
-      <p>Bonjour ${user.fullName},</p>
-      <p>Votre compte FixNow a été créé avec succès. Vous pouvez dès à présent
+      <p>Bonjour ${user.name},</p>
+      <p>Votre compte Maalam Expert a été créé avec succès. Vous pouvez dès à présent
       vous connecter et profiter de la plateforme.</p>
-      <p>L'équipe FixNow</p>
+      <p>L'équipe Maalam Expert</p>
     `,
   });
 
 /**
  * Email envoyé au client pour confirmer la prise en compte de sa demande.
- * @param {{ email: string, fullName: string }} client
+ * @param {{ email: string, name: string }} client
  * @param {{ _id: string, serviceCategory: string }} reservation
  */
 const sendReservationConfirmationEmail = (client, reservation) =>
   sendEmail({
     to: client.email,
-    subject: 'Votre demande FixNow a été enregistrée',
+    subject: 'Votre demande Maalam Expert a été enregistrée',
     html: `
-      <p>Bonjour ${client.fullName},</p>
+      <p>Bonjour ${client.name},</p>
       <p>Votre demande d'intervention <strong>${reservation.serviceCategory}</strong>
       (référence #${reservation._id}) a bien été enregistrée. Nous recherchons
       actuellement un artisan disponible près de chez vous.</p>
-      <p>L'équipe FixNow</p>
+      <p>L'équipe Maalam Expert</p>
     `,
   });
 
 /**
  * Email envoyé au client lorsqu'un artisan a accepté sa demande.
- * @param {{ email: string, fullName: string }} client
- * @param {{ fullName: string, phone: string }} artisan
+ * @param {{ email: string, name: string }} client
+ * @param {{ name: string, phone: string }} worker
  */
-const sendArtisanAssignedEmail = (client, artisan) =>
+const sendWorkerAssignedEmail = (client, worker) =>
   sendEmail({
     to: client.email,
     subject: 'Un artisan a accepté votre demande !',
     html: `
-      <p>Bonjour ${client.fullName},</p>
-      <p><strong>${artisan.fullName}</strong> a accepté votre demande et se
-      dirige vers vous. Vous pouvez le contacter directement au ${artisan.phone}
+      <p>Bonjour ${client.name},</p>
+      <p><strong>${worker.name}</strong> a accepté votre demande et se
+      dirige vers vous. Vous pouvez le contacter directement au ${worker.phone}
       ou via la messagerie de l'application.</p>
-      <p>L'équipe FixNow</p>
+      <p>L'équipe Maalam Expert</p>
     `,
   });
 
@@ -112,5 +112,5 @@ module.exports = {
   sendEmail,
   sendWelcomeEmail,
   sendReservationConfirmationEmail,
-  sendArtisanAssignedEmail,
+  sendWorkerAssignedEmail,
 };

@@ -14,7 +14,7 @@ export default function BlogArticleCard({ post }) {
             />
           ) : (
             <div className="flex h-full items-center justify-center text-gray-300 dark:text-gray-700">
-              FixNow
+              Maalam Expert
             </div>
           )}
         </div>

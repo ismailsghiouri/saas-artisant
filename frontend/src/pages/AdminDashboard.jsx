@@ -7,7 +7,7 @@ import {
 } from '../utils/api';
 import { formatDate } from '../utils/helpers';
 
-const ADMIN_KEY_STORAGE = 'fixnow_admin_key';
+const ADMIN_KEY_STORAGE = 'maalam_expert_admin_key';
 
 const emptyForm = {
   title: '',
@@ -18,7 +18,7 @@ const emptyForm = {
   category: '',
   tags: '',
   city: '',
-  authorName: 'Équipe FixNow',
+  authorName: 'Équipe Maalam Expert',
   status: 'draft',
   seoTitle: '',
   seoDescription: '',
@@ -275,7 +275,7 @@ export default function AdminDashboard() {
       <div className="page-container max-w-md py-16">
         <h1 className="section-title">Accès administrateur</h1>
         <p className="section-subtitle mb-6">
-          Entrez la clé d'administration FixNow pour gérer les articles du blog.
+          Entrez la clé d'administration Maalam Expert pour gérer les articles du blog.
         </p>
         <form onSubmit={handleKeySubmit} className="card space-y-3 p-6">
           <div>
@@ -301,7 +301,7 @@ export default function AdminDashboard() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="section-title">Gestion du blog</h1>
-          <p className="section-subtitle">Créez, modifiez et publiez les articles FixNow.</p>
+          <p className="section-subtitle">Créez, modifiez et publiez les articles Maalam Expert.</p>
         </div>
         <div className="flex gap-2">
           <button onClick={() => setEditingPost(null)} className="btn-accent">

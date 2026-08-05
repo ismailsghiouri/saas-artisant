@@ -8,14 +8,14 @@
  *   - garder les schémas de validation Mongoose (models/) comme filet de
  *     sécurité final, mais éviter de s'y fier comme unique ligne de défense.
  *
- * Les enums (métiers, statuts...) sont importés directement depuis les
+ * Les enums (catégories, statuts...) sont importés directement depuis les
  * modèles Mongoose pour n'avoir qu'une seule source de vérité.
  * -----------------------------------------------------------------------------
  */
 
 const Joi = require('joi');
 const { AppError } = require('../utils/errorHandler');
-const Artisan = require('../models/Artisan');
+const Worker = require('../models/Worker');
 const Reservation = require('../models/Reservation');
 const Ad = require('../models/Ad');
 
@@ -63,39 +63,55 @@ const validateQuery = (schema) => (req, res, next) => {
 };
 
 const schemas = {
-  // --- Artisan ---
-  registerArtisan: Joi.object({
-    fullName: Joi.string().trim().min(2).max(100).required(),
+  // --- Authentification (routes/auth.js) ---
+  signupWorker: Joi.object({
+    name: Joi.string().trim().min(2).max(100).required(),
     email: Joi.string().email().required(),
-    password: Joi.string().min(8).max(72).required(),
+    password: Joi.string().min(6).max(72).required(),
     phone: Joi.string().pattern(moroccanPhone).required().messages({
       'string.pattern.base': 'Numéro de téléphone marocain invalide.',
     }),
-    profession: Joi.string()
-      .valid(...Artisan.PROFESSIONS)
+    city: Joi.string().trim().allow('', null),
+    category: Joi.string()
+      .valid(...Worker.CATEGORIES)
       .required(),
-    servicesOffered: Joi.array().items(Joi.string().trim()).default([]),
-    city: Joi.string().trim().required(),
-    address: Joi.string().trim().allow('', null),
-    bio: Joi.string().max(1000).allow('', null),
-    experienceYears: Joi.number().min(0).default(0),
-    hourlyRate: Joi.number().min(0).allow(null),
+    years_experience: Joi.number().min(0).default(0),
   }),
 
-  updateArtisanProfile: Joi.object({
-    fullName: Joi.string().trim().min(2).max(100),
+  signupClient: Joi.object({
+    name: Joi.string().trim().min(2).max(100).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).max(72).required(),
+    phone: Joi.string().pattern(moroccanPhone).required().messages({
+      'string.pattern.base': 'Numéro de téléphone marocain invalide.',
+    }),
+    city: Joi.string().trim().allow('', null),
+    address: Joi.string().trim().allow('', null),
+  }),
+
+  login: Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+
+  // --- Worker ---
+  updateWorkerProfile: Joi.object({
+    name: Joi.string().trim().min(2).max(100),
     phone: Joi.string().pattern(moroccanPhone).messages({
       'string.pattern.base': 'Numéro de téléphone marocain invalide.',
     }),
-    profession: Joi.string().valid(...Artisan.PROFESSIONS),
-    servicesOffered: Joi.array().items(Joi.string().trim()),
+    category: Joi.string().valid(...Worker.CATEGORIES),
+    services: Joi.array().items(Joi.string().trim()),
     city: Joi.string().trim(),
-    address: Joi.string().trim().allow('', null),
-    bio: Joi.string().max(1000).allow('', null),
-    experienceYears: Joi.number().min(0),
-    hourlyRate: Joi.number().min(0).allow(null),
+    description: Joi.string().max(1000).allow('', null),
+    photos: Joi.array().items(Joi.string().uri()),
+    yearsExperience: Joi.number().min(0),
+    priceEstimateRange: Joi.object({
+      min: Joi.number().min(0).allow(null),
+      max: Joi.number().min(0).allow(null),
+    }),
     serviceRadiusKm: Joi.number().min(1).max(100),
-    profilePhotoUrl: Joi.string().uri().allow(null),
+    avatarUrl: Joi.string().uri().allow(null),
     location: Joi.object({
       coordinates: Joi.array().items(Joi.number()).length(2).required(),
     }),
@@ -105,14 +121,14 @@ const schemas = {
     isAvailable: Joi.boolean().required(),
   }),
 
-  submitKyc: Joi.object({
+  submitVerification: Joi.object({
     idCardUrl: Joi.string().uri().required(),
     proofOfAddressUrl: Joi.string().uri().required(),
     certificationUrls: Joi.array().items(Joi.string().uri()).default([]),
   }),
 
-  searchArtisans: Joi.object({
-    profession: Joi.string().valid(...Artisan.PROFESSIONS),
+  searchWorkers: Joi.object({
+    category: Joi.string().valid(...Worker.CATEGORIES),
     city: Joi.string().trim(),
     lat: Joi.number().min(-90).max(90),
     lng: Joi.number().min(-180).max(180),
@@ -123,40 +139,20 @@ const schemas = {
   }).with('lat', 'lng').with('lng', 'lat'),
 
   // --- Client ---
-  registerClient: Joi.object({
-    fullName: Joi.string().trim().min(2).max(100).required(),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).max(72).required(),
-    phone: Joi.string().pattern(moroccanPhone).required().messages({
-      'string.pattern.base': 'Numéro de téléphone marocain invalide.',
-    }),
-    city: Joi.string().trim().allow('', null),
-    address: Joi.string().trim().allow('', null),
-    accountType: Joi.string().valid('particulier', 'professionnel').default('particulier'),
-    companyName: Joi.string().trim().allow('', null),
-  }),
-
   updateClientProfile: Joi.object({
-    fullName: Joi.string().trim().min(2).max(100),
+    name: Joi.string().trim().min(2).max(100),
     phone: Joi.string().pattern(moroccanPhone).messages({
       'string.pattern.base': 'Numéro de téléphone marocain invalide.',
     }),
     city: Joi.string().trim().allow('', null),
     address: Joi.string().trim().allow('', null),
-    profilePhotoUrl: Joi.string().uri().allow(null),
-    companyName: Joi.string().trim().allow('', null),
+    avatarUrl: Joi.string().uri().allow(null),
   }).min(1),
-
-  // --- Auth partagée (client & artisan) ---
-  login: Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-  }),
 
   // --- Réservation ---
   createReservation: Joi.object({
     serviceCategory: Joi.string()
-      .valid(...Artisan.PROFESSIONS)
+      .valid(...Worker.CATEGORIES)
       .required(),
     description: Joi.string().trim().min(5).max(1000).required(),
     photos: Joi.array().items(Joi.string().uri()).default([]),
@@ -175,6 +171,23 @@ const schemas = {
       otherwise: Joi.forbidden(),
     }),
     estimatedPrice: Joi.number().min(0).allow(null),
+  }),
+
+  // Contact direct d'un artisan précis depuis son profil (bouton WhatsApp) :
+  // contrairement à createReservation (diffusée aux artisans proches), le
+  // worker est ici explicitement choisi par le client.
+  createDirectReservation: Joi.object({
+    workerId: Joi.string().hex().length(24).required(),
+    description: Joi.string().trim().min(5).max(1000).required(),
+    address: Joi.string().trim().required(),
+    location: Joi.object({
+      coordinates: Joi.array().items(Joi.number()).length(2).required().messages({
+        'array.length': 'Les coordonnées doivent être [longitude, latitude].',
+      }),
+    }).required(),
+    urgency: Joi.string()
+      .valid(...Reservation.URGENCY_LEVELS)
+      .default('today'),
   }),
 
   completeReservation: Joi.object({

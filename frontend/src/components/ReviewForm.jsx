@@ -39,7 +39,7 @@ export default function ReviewForm({ reservation, onClose, onSuccess }) {
         <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
           Votre avis sur l'intervention de{' '}
           <span className="font-medium text-gray-700 dark:text-gray-300">
-            {reservation.artisan?.fullName}
+            {reservation.worker?.name}
           </span>
         </p>
 

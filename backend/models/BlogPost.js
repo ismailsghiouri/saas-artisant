@@ -2,8 +2,8 @@
  * models/BlogPost.js
  * -----------------------------------------------------------------------------
  * Article de blog utilisé pour l'acquisition SEO (voir document
- * d'architecture FixNow, section blog). Les articles publiés sont exposés en
- * lecture publique ; la création/édition est réservée à l'équipe FixNow.
+ * d'architecture Maalam Expert, section blog). Les articles publiés sont exposés en
+ * lecture publique ; la création/édition est réservée à l'équipe Maalam Expert.
  * -----------------------------------------------------------------------------
  */
 
@@ -60,7 +60,7 @@ const blogPostSchema = new mongoose.Schema(
     authorName: {
       type: String,
       trim: true,
-      default: 'Équipe FixNow',
+      default: 'Équipe Maalam Expert',
     },
     status: {
       type: String,

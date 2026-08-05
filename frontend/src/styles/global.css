@@ -1,18 +1,133 @@
-@import './components.css';
-@import './pages.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 min-h-[48px] text-sm font-semibold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm;
+  }
+  .btn-primary {
+    @apply btn bg-primary-500 hover:bg-primary-600 text-white focus:outline-none focus:ring-2 focus:ring-primary-300 shadow-glow-primary;
+  }
+  .btn-accent, .btn-cta {
+    @apply btn bg-secondary-500 hover:bg-secondary-600 text-white focus:outline-none focus:ring-2 focus:ring-secondary-300 shadow-glow;
+  }
+  .btn-outline {
+    @apply btn border border-primary-500 text-primary-600 dark:text-primary-300 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md hover:bg-primary-50 dark:hover:bg-gray-800;
+  }
+  .btn-ghost {
+    @apply btn text-gray-700 dark:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/80;
+  }
+
+  /* Input Fields */
+  .input-field {
+    @apply w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 px-4 py-3 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 focus:bg-white dark:focus:bg-gray-900;
+  }
+  .select-field {
+    @apply input-field appearance-none pr-8;
+  }
+  .label-field {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400;
+  }
+
+  /* Cards & Elevatioon */
+  .card {
+    @apply rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-fixnow-card transition-all duration-300;
+  }
+  .card-hover {
+    @apply card hover:shadow-fixnow-floating hover:border-primary-500/30 hover:-translate-y-0.5;
+  }
+  .glass-card {
+    @apply rounded-xl border border-white/30 dark:border-gray-800/50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-glass dark:shadow-glass-dark;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium tracking-wide;
+  }
+  .badge-primary {
+    @apply badge bg-primary-100 text-primary-800 dark:bg-primary-900/40 dark:text-primary-200;
+  }
+  .badge-secondary {
+    @apply badge bg-secondary-100 text-secondary-800 dark:bg-secondary-900/40 dark:text-secondary-200;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4;
+  }
+  .modal-panel {
+    @apply w-full max-w-md rounded-2xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-2xl;
+  }
+
+  /* Typography & Titles */
+  .section-title {
+    @apply font-sans text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white;
+  }
+  .section-subtitle {
+    @apply mt-2 text-base text-slate-600 dark:text-gray-400 max-w-2xl;
+  }
+
+  /* Page Layouts */
+  .page-container {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .hero-gradient {
+    @apply relative bg-gradient-to-br from-primary-50 via-white to-primary-50/60 dark:from-gray-950 dark:via-gray-950 dark:to-gray-900 overflow-hidden;
+  }
+
+  .prose-maalam-expert {
+    @apply max-w-none text-gray-700 dark:text-gray-300 leading-relaxed;
+  }
+  .prose-maalam-expert p {
+    @apply mb-4;
+  }
+  .prose-maalam-expert h2 {
+    @apply mt-8 mb-3 text-xl font-bold text-gray-900 dark:text-white;
+  }
+  .prose-maalam-expert h3 {
+    @apply mt-6 mb-2 text-lg font-semibold text-gray-900 dark:text-white;
+  }
+  .prose-maalam-expert a {
+    @apply text-primary-600 dark:text-primary-400 underline;
+  }
+  .prose-maalam-expert ul {
+    @apply mb-4 ml-5 list-disc;
+  }
+
+  .stat-tile {
+    @apply card p-4 text-center;
+  }
+}
 
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  @apply bg-surface text-slate-900 dark:bg-slate-950 dark:text-slate-100;
 }
 
 ::selection {
   @apply bg-primary-200 text-primary-900;
+}
+
+/* RAGDoc Specific Styles */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    vertical-align: middle;
+}
+.citation-badge {
+    @apply bg-[#10b981] text-white px-1.5 py-0.5 rounded text-[11px] font-semibold cursor-pointer ml-1;
+}
+.searching-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .5; }
 }

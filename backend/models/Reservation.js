@@ -4,7 +4,7 @@
  * Représente une demande d'intervention (booking) émise par un client, depuis
  * sa création jusqu'à sa clôture (ou son annulation).
  *
- * Le cycle de vie suit le flux décrit dans le document d'architecture FixNow :
+ * Le cycle de vie suit le flux décrit dans le document d'architecture Maalam Expert :
  *   pending -> assigned -> in_progress -> completed
  *                                       -> cancelled (à tout moment avant completed)
  * -----------------------------------------------------------------------------
@@ -25,9 +25,9 @@ const reservationSchema = new mongoose.Schema(
       required: [true, 'La réservation doit être associée à un client.'],
     },
     // Nul tant qu'aucun artisan n'a accepté la demande.
-    artisan: {
+    worker: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Artisan',
+      ref: 'Worker',
       default: null,
     },
     serviceCategory: {
@@ -122,7 +122,7 @@ const reservationSchema = new mongoose.Schema(
 // --- Index ---
 reservationSchema.index({ location: '2dsphere' });
 reservationSchema.index({ client: 1, createdAt: -1 });
-reservationSchema.index({ artisan: 1, status: 1 });
+reservationSchema.index({ worker: 1, status: 1 });
 reservationSchema.index({ status: 1, urgency: 1 });
 
 // --- Hooks ---

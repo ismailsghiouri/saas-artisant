@@ -2,8 +2,8 @@
  * controllers/reviewController.js
  * -----------------------------------------------------------------------------
  * Gestion des avis clients sur les artisans. La mise à jour de la note
- * moyenne de l'artisan (Artisan.rating) est entièrement déléguée au hook
- * post-save du modèle Review — ce contrôleur ne s'occupe que de la
+ * moyenne de l'artisan (Worker.rating/totalReviews) est entièrement déléguée
+ * au hook post-save du modèle Review — ce contrôleur ne s'occupe que de la
  * validation métier (réservation terminée, appartenance au client, pas de
  * doublon) et de la lecture publique des avis.
  * -----------------------------------------------------------------------------
@@ -15,7 +15,7 @@ const { AppError, asyncHandler } = require('../utils/errorHandler');
 
 /**
  * POST /api/reviews
- * Le client note une intervention terminée (user story C-05).
+ * Le client note une intervention terminée.
  */
 const createReview = asyncHandler(async (req, res, next) => {
   const { reservationId, rating, comment } = req.body;
@@ -26,8 +26,8 @@ const createReview = asyncHandler(async (req, res, next) => {
     return next(new AppError('Réservation introuvable.', 404));
   }
 
-  if (!reservation.client.equals(req.user._id)) {
-    return next(new AppError("Vous ne pouvez noter que vos propres réservations.", 403));
+  if (!reservation.client.equals(req.user.id)) {
+    return next(new AppError('Vous ne pouvez noter que vos propres réservations.', 403));
   }
 
   if (reservation.status !== 'completed') {
@@ -43,8 +43,8 @@ const createReview = asyncHandler(async (req, res, next) => {
 
   const review = await Review.create({
     reservation: reservationId,
-    client: req.user._id,
-    artisan: reservation.artisan,
+    client: req.user.id,
+    worker: reservation.worker,
     rating,
     comment,
   });
@@ -53,29 +53,29 @@ const createReview = asyncHandler(async (req, res, next) => {
 });
 
 /**
- * GET /api/reviews/artisan/:artisanId
- * GET /api/artisans/:id/reviews
- * GET /api/reviews?artisan_id=X
+ * GET /api/reviews/worker/:workerId
+ * GET /api/workers/:id/reviews
+ * GET /api/reviews?worker_id=X
  * Liste publique et paginée des avis d'un artisan (fiche profil). L'identifiant
  * de l'artisan peut être fourni en paramètre de route (deux formats, selon le
  * routeur qui monte ce contrôleur) ou en query string.
  */
-const getArtisanReviews = asyncHandler(async (req, res, next) => {
-  const artisanId = req.params.artisanId || req.params.id || req.query.artisan_id;
+const getWorkerReviews = asyncHandler(async (req, res, next) => {
+  const workerId = req.params.workerId || req.params.id || req.query.worker_id;
 
-  if (!artisanId) {
-    return next(new AppError("L'identifiant de l'artisan est requis (artisan_id).", 400));
+  if (!workerId) {
+    return next(new AppError("L'identifiant de l'artisan est requis (worker_id).", 400));
   }
 
   const page = Math.max(1, Number(req.query.page) || 1);
   const limit = Math.min(50, Number(req.query.limit) || 10);
   const skip = (page - 1) * limit;
 
-  const filter = { artisan: artisanId };
+  const filter = { worker: workerId };
 
   const [reviews, total] = await Promise.all([
     Review.find(filter)
-      .populate('client', 'fullName profilePhotoUrl')
+      .populate('client', 'name avatarUrl')
       .sort('-createdAt')
       .skip(skip)
       .limit(limit),
@@ -106,7 +106,7 @@ const updateReview = asyncHandler(async (req, res, next) => {
     return next(new AppError('Avis introuvable.', 404));
   }
 
-  if (!review.client.equals(req.user._id)) {
+  if (!review.client.equals(req.user.id)) {
     return next(new AppError('Vous ne pouvez modifier que vos propres avis.', 403));
   }
 
@@ -130,15 +130,15 @@ const deleteReview = asyncHandler(async (req, res, next) => {
     return next(new AppError('Avis introuvable.', 404));
   }
 
-  if (!review.client.equals(req.user._id)) {
+  if (!review.client.equals(req.user.id)) {
     return next(new AppError('Vous ne pouvez supprimer que vos propres avis.', 403));
   }
 
-  const artisanId = review.artisan;
+  const workerId = review.worker;
   await review.deleteOne();
-  await Review.recalculateArtisanRating(artisanId);
+  await Review.recalculateWorkerRating(workerId);
 
   res.status(204).json({ success: true, data: null });
 });
 
-module.exports = { createReview, getArtisanReviews, updateReview, deleteReview };
+module.exports = { createReview, getWorkerReviews, updateReview, deleteReview };
